@@ -1,29 +1,26 @@
+// src/components/SearchBar.js
 import React, { useState } from 'react';
 
 const SearchBar = ({ onSearch }) => {
   const [query, setQuery] = useState('');
 
-  const handleSearch = (e) => {
-    e.preventDefault();
+  const handleSearch = () => {
     onSearch(query);
   };
 
   return (
-    <form className="flex justify-center mt-10" onSubmit={handleSearch}>
+    <div className="flex justify-center">
       <input
         type="text"
-        className="border border-gray-300 p-2 rounded-l-md"
-        placeholder="Search for a movie..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search for movies"
+        className="border p-2"
       />
-      <button
-        type="submit"
-        className="bg-blue-500 text-white p-2 rounded-r-md"
-      >
+      <button onClick={handleSearch} className="bg-blue-500 text-white p-2 ml-2 rounded">
         Search
       </button>
-    </form>
+    </div>
   );
 };
 

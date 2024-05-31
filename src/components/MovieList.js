@@ -1,16 +1,18 @@
 // src/components/MovieList.js
 import React from 'react';
-import MovieCard from './MovieCard';
 
 const MovieList = ({ movies, onAddToList }) => {
   return (
-    <div className="container mx-auto mt-10">
-      <h2 className="text-2xl font-bold mb-4">My Movie List</h2>
-      <div className="flex flex-wrap justify-center">
-        {movies.map((movie) => (
-          <MovieCard key={movie.imdbID} movie={movie} onAddToList={onAddToList} />
-        ))}
-      </div>
+    <div className="flex flex-wrap justify-center mt-10">
+      {movies.map((movie) => (
+        <div key={movie.imdbID} className="border p-4 m-2">
+          <h3>{movie.Title}</h3>
+          <p>{movie.Year}</p>
+          <button onClick={() => onAddToList(movie)} className="bg-green-500 text-white p-2 rounded">
+            Add to List
+          </button>
+        </div>
+      ))}
     </div>
   );
 };
