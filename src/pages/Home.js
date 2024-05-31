@@ -1,20 +1,38 @@
 // src/pages/Home.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import SearchBar from '../components/SearchBar';
 import MovieCard from '../components/MovieCard';
 import MovieList from '../components/MovieList';
+import PrivacySelector from '../components/PrivacySelector';
+import { auth, db } from '../firebase';
+import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
+import { useAuth } from '../AuthContext';
 
 const Home = () => {
+  const { user } = useAuth();
   const [movies, setMovies] = useState([]);
   const [movieList, setMovieList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
-  const [query, setQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [showList, setShowList] = useState(false);
+  const [isPublic, setIsPublic] = useState(false);
+
+  useEffect(() => {
+    const fetchMovieLists = async () => {
+      const q = query(collection(db, 'movieLists'), where('owner', '==', user.uid));
+      const querySnapshot = await getDocs(q);
+      const lists = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      // If you intend to use movieLists later, you can uncomment the following line
+      setMovieList(lists);
+    };
+
+    fetchMovieLists();
+  }, [user]);
 
   const handleSearch = async (query, page = 1) => {
-    setQuery(query);
+    setSearchQuery(query);
     try {
       const response = await axios.get(`http://www.omdbapi.com/?s=${query}&apikey=f65c909e&page=${page}`);
       if (response.data.Response === 'True') {
@@ -30,18 +48,33 @@ const Home = () => {
     }
   };
 
-  const handleAddToList = (movie) => {
-    setMovieList((prevList) => [...prevList, movie]);
+  const handleAddToList = async (movie) => {
+    const newMovieList = [...movieList, movie];
+    setMovieList(newMovieList);
+
+    await addDoc(collection(db, 'movieLists'), {
+      name: 'My Movie List',
+      movies: newMovieList,
+      owner: user.uid,
+      isPublic: isPublic,
+    });
+  };
+
+  const handleLogout = () => {
+    auth.signOut().then(() => {
+      window.location.href = "/login"; // Redirect to login page after logout
+    });
   };
 
   const handlePageChange = (page) => {
-    handleSearch(query, page);
+    handleSearch(searchQuery, page);
   };
 
   const totalPages = Math.ceil(totalResults / 10);
 
   return (
     <div className="container mx-auto">
+      <button onClick={handleLogout}>Logout</button>
       <div className="flex justify-between items-center mt-10">
         <SearchBar onSearch={handleSearch} />
         <button
@@ -50,6 +83,7 @@ const Home = () => {
         >
           {showList ? 'Hide List' : 'Show List'}
         </button>
+        <PrivacySelector isPublic={isPublic} setIsPublic={setIsPublic} />
       </div>
       {showList ? (
         <MovieList movies={movieList} onAddToList={handleAddToList} />
