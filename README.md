@@ -1,6 +1,10 @@
 
 # MOVIE LIBRARY
 
+
+https://github.com/KeplerInCoding/fasal_assignment/assets/97353931/a8e936a2-6ce5-4db4-b4f2-fbcf28a08e80
+
+
 ## Project Description
 1. The application has user authentication ( Sign In/ Sign Up )
 2. After logging in users will be navigated to the home screen where they should see a search
