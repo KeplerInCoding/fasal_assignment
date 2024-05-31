@@ -24,7 +24,6 @@ const Home = () => {
       const q = query(collection(db, 'movieLists'), where('owner', '==', user.uid));
       const querySnapshot = await getDocs(q);
       const lists = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      // If you intend to use movieLists later, you can uncomment the following line
       setMovieList(lists);
     };
 
