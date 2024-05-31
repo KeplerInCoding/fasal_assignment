@@ -4,7 +4,7 @@ import Home from './pages/Home';
 import GoogleLogin from './components/GoogleLogin';
 import PublicMovieList from './pages/PublicMovieList';
 import { AuthProvider} from './AuthContext';
-import PrivateRoute from './components/PrivateRoute';
+import PrivateRoute from './PrivateRoute';
 
 const App = () => {
 
